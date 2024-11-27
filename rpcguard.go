@@ -13,7 +13,7 @@ import (
 
 const doc = "rpcguard checks if connect endpoint is implemented properly."
 
-// Analyzer checks usage of the mockgen follows convention.
+// Analyzer checks if connect endpoint is implemented properly.
 var Analyzer = &analysis.Analyzer{
 	Name:     "rpcguard",
 	Doc:      doc,
@@ -29,6 +29,9 @@ func init() {
 func run(pass *analysis.Pass) (interface{}, error) {
 	for _, file := range pass.Files {
 		fileName := pass.Fset.Position(file.Pos()).Filename
+		if skipFile(fileName) {
+			continue
+		}
 		aliases, err := getAliasData(pass, file)
 		if err != nil {
 			// skip file that imports package more than once.
@@ -67,6 +70,16 @@ func run(pass *analysis.Pass) (interface{}, error) {
 
 	}
 	return nil, nil
+}
+
+func skipFile(fileName string) bool {
+	if strings.HasSuffix(fileName, "_test.go") {
+		return true
+	}
+	if strings.HasSuffix(fileName, ".connect.go") {
+		return true
+	}
+	return false
 }
 
 type aliasData struct {
