@@ -25,7 +25,7 @@ func newPlugin(conf any) (register.LinterPlugin, error) {
 }
 
 type settings struct {
-	Verbose bool
+	Verbose string
 }
 
 type plugin struct {
@@ -33,8 +33,8 @@ type plugin struct {
 }
 
 func (p *plugin) BuildAnalyzers() ([]*analysis.Analyzer, error) {
-	if p.settings.Verbose {
-		Verbose = p.settings.Verbose
+	if p.settings.Verbose == "true" {
+		Verbose = true
 	}
 	return []*analysis.Analyzer{
 		Analyzer,
