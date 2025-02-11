@@ -4,6 +4,7 @@ go 1.23
 
 require (
 	github.com/golangci/plugin-module-register v0.1.1
+	github.com/google/go-cmp v0.6.0
 	github.com/gostaticanalysis/analysisutil v0.7.1
 	github.com/gostaticanalysis/testutil v0.5.2
 	golang.org/x/tools v0.30.0
