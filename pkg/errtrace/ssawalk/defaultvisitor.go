@@ -2,6 +2,7 @@ package ssawalk
 
 import (
 	"fmt"
+	"regexp"
 
 	"golang.org/x/tools/go/ssa"
 )
@@ -117,6 +118,9 @@ func (v DefaultVisitor) Visit(value ssa.Value) (Visitor, error) {
 		}
 		return nil, nil
 	case *ssa.Alloc:
+		if isOKDefer(value) {
+			return nil, nil
+		}
 		if v.opts.visitAlloc != nil {
 			if err := v.opts.visitAlloc(value); err != nil {
 				return nil, err
@@ -152,4 +156,22 @@ func (v DefaultVisitor) Visit(value ssa.Value) (Visitor, error) {
 		return v, nil // without opts, call should be walked further.
 	}
 	return v, nil
+}
+
+// okDeferPattern are `local error ()` or `local error (err1)`
+// err1 in paren is variable name.
+// okDefer means func has a defer block and the defer block does not assign error.
+/*
+	func Foo() (x string, err1 error) {
+		defer func () {
+			x = "set in defer"
+		}
+		return "ok", nil
+	}
+*/
+var okDeferPattern = regexp.MustCompile(`local error \(.*\)`)
+
+func isOKDefer(value *ssa.Alloc) bool {
+	str := value.String()
+	return okDeferPattern.MatchString(str)
 }
