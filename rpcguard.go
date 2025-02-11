@@ -116,7 +116,7 @@ func getAliasData(pass *analysis.Pass, file *ast.File) (*aliasData, error) {
 // getImportAlias(x, "connectrpc.com/connect", "connect") returns "connect"
 // With alias e.g. cc "connectrpc.com/connect"
 // getImportAlias(x, "connectrpc.com/connect", "connect") returns "cc"
-func getImportAlias(pass *analysis.Pass, file *ast.File, targetImportPath string, defaultRef string) (string, error) {
+func getImportAlias(pass *analysis.Pass, file *ast.File, targetImportPath, defaultRef string) (string, error) {
 	var alias string
 	for _, imp := range file.Imports {
 		path := strings.Trim(imp.Path.Value, `"`)

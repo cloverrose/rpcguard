@@ -23,3 +23,28 @@ aqua/update-checksum:
 .PHONY: aqua/reset
 aqua/reset:
 	aqua rm -all
+
+# lint runs the linters.
+.PHONY: lint
+lint:
+	@golangci-lint version
+	@golangci-lint run $(args) --config=./.golangci.yaml ./...
+
+# fmt formats the files.
+.PHONY: fmt
+fmt:
+	@find . -iname "*.go" -not -path "./vendor/**" | xargs gofmt -s -w
+	gofumpt -w -extra .
+	@# gci's option should match with .golangci.yaml
+	gci write . --skip-generated --skip-vendor --custom-order -s standard -s default -s 'prefix(github.com/gostaticanalysis)' -s 'prefix(github.com/cloverrose)' -s 'prefix(github.com/cloverrose/rpcguard/pkg)' -s 'prefix(github.com/cloverrose/rpcguard)'
+
+# tidy updates the go.mod and go.sum files.
+.PHONY: tidy
+tidy:
+	go mod tidy -v
+
+# test runs the tests.
+.PHONY: test
+test:
+	# @go test $(args) -race -cover ./...
+	@go test $(args) ./...
