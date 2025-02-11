@@ -48,3 +48,13 @@ tidy:
 test:
 	# @go test $(args) -race -cover ./...
 	@go test $(args) ./...
+
+# build creates the binaries.
+.PHONY: build
+build:
+	make build/rpc_callvalidate
+
+# build/rpc_callvalidate creates the callvalidate binary.
+.PHONY: build/rpc_callvalidate
+build/rpc_callvalidate:
+	@CGO_ENABLED=0 go build -o bin/rpc_callvalidate -v ./cmd/callvalidate

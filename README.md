@@ -1,25 +1,25 @@
 # rpcguard
 
-`rpcguard` checks if connect-RPC endpoint method is implemented properly.
+`rpcguard` is collection of connect-RPC usage linters which check if connect-RPC method is implemented properly.
+
+- rpc_callvalidate: check if RPC method uses Validate method properly
 
 ## Config
 
-`rpcguard` provides options. Please see [config.go](config.go)
+- `rpc_callvalidate` provides options. Please see [callvalidate/config.go](passes/callvalidate/config.go)
 
 You can overwrite via commandline option or golangci setting.
-
-- Verbose
 
 ## Install
 
 ```shell
-$ go install github.com/cloverrose/rpcguard/cmd/rpcguard@latest
+$ go install github.com/cloverrose/rpcguard/cmd/callvalidate@latest
 ```
 
 ### Or Build from source
 
 ```shell
-$ go build -o bin/ ./cmd/...
+$ make build
 ```
 
 ### Or Install via aqua
@@ -29,14 +29,14 @@ https://aquaproj.github.io/
 ## Usage
 
 ```shell
-$ go vet -vettool=`which rpcguard` ./...
+$ go vet -vettool=`which rpc_callvalidate` ./...
 ```
 
 When you specify config
 
 ```shell
-go vet -vettool=`which rpcguard` \
-  -rpcguard.Verbose=true \
+go vet -vettool=`which rpc_callvalidate` \
+  -rpc_callvalidate.LogLevel=ERROR \
    ./...
 ```
 
@@ -49,11 +49,11 @@ Here are reference settings
 `.custom-gcl.yml`
 
 ```yaml
-version: v1.62.0
+version: v1.63.4
 plugins:
   - module: 'github.com/cloverrose/rpcguard'
     import: 'github.com/cloverrose/rpcguard'
-    version: v0.1.0
+    version: v0.4.0
 ```
 
 `.golangci.yml`
@@ -61,9 +61,9 @@ plugins:
 ```yaml
 linters-settings:
   custom:
-    rpcguard:
+    rpc_callvalidate:
       type: "module"
-      description: check connect-RPC endpoint implementation.
+      description: check if RPC method uses Validate method properly.
       settings:
-        Verbose: true
+        LogLevel: "ERROR"
 ```
