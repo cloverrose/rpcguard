@@ -20,8 +20,9 @@ func newPlugin(conf any) (register.LinterPlugin, error) {
 }
 
 type settings struct {
-	LogLevel     string
-	ExcludeFiles string
+	LogLevel        string
+	ExcludeFiles    string
+	ValidateMethods string
 }
 
 type plugin struct {
@@ -34,6 +35,9 @@ func (p *plugin) BuildAnalyzers() ([]*analysis.Analyzer, error) {
 	}
 	if p.settings.ExcludeFiles != "" {
 		ExcludeFiles = p.settings.ExcludeFiles
+	}
+	if p.settings.ValidateMethods != "" {
+		ValidateMethods = p.settings.ValidateMethods
 	}
 	return []*analysis.Analyzer{
 		Analyzer,
