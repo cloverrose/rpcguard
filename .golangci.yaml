@@ -94,3 +94,8 @@ issues:
   max-same-issues: 0
   exclude-dirs:
     - bin
+  exclude-rules:
+    - path: pkg/factutil/wrapper.go
+      text: "import 'reflect' is not allowed from list 'main'"
+      linters:
+        - depguard # wrapper needs to use reflect.

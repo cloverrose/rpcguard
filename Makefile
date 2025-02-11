@@ -53,11 +53,17 @@ test:
 .PHONY: build
 build:
 	make build/rpc_callvalidate
+	make build/rpc_wraperr
 
 # build/rpc_callvalidate creates the callvalidate binary.
 .PHONY: build/rpc_callvalidate
 build/rpc_callvalidate:
 	@CGO_ENABLED=0 go build -o bin/rpc_callvalidate -v ./cmd/callvalidate
+
+# build/rpc_wraperr creates the wraperr binary.
+.PHONY: build/rpc_wraperr
+build/rpc_wraperr:
+	@CGO_ENABLED=0 go build -o bin/rpc_wraperr -v ./cmd/wraperr
 
 # goreleaser/local runs goreleaser locally.
 # see https://goreleaser.com/quick-start/
