@@ -58,3 +58,9 @@ build:
 .PHONY: build/rpc_callvalidate
 build/rpc_callvalidate:
 	@CGO_ENABLED=0 go build -o bin/rpc_callvalidate -v ./cmd/callvalidate
+
+# goreleaser/local runs goreleaser locally.
+# see https://goreleaser.com/quick-start/
+.PHONY: goreleaser/local
+goreleaser/local:
+	goreleaser release --snapshot --clean
