@@ -48,13 +48,22 @@ func (cg *CallGraph) Scan(srcFunc *ssa.Function) error {
 func scanFunc(fn *ssa.Function, indices []int) (*FuncInfo, error) {
 	data := make(map[*ssa.Return]*returnInfo)
 	for _, val := range rtn.GetReturnsAt(fn, indices) {
-		info, err := scanVal(val.Value, indices)
+		info, err := scanVal(val.Value, getTargetIndex(val.Value))
 		if err != nil {
 			return nil, err
 		}
 		data[val.Return] = info
 	}
 	return &FuncInfo{data: data}, nil
+}
+
+func getTargetIndex(val ssa.Value) []int {
+	switch val := val.(type) {
+	case *ssa.Extract:
+		return []int{val.Index}
+	default:
+		return []int{0}
+	}
 }
 
 // scanVal scans single return value and returns returnInfo.
