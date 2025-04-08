@@ -43,7 +43,9 @@ var Analyzer = &analysis.Analyzer{
 }
 
 func init() {
-	Analyzer.Flags.StringVar(&LogLevel, "LogLevel", LogLevel, "logging level")
+	Analyzer.Flags.StringVar(&LogConfig.Level, "log.level", LogConfig.Level, "logging level. debug, info, warn, error")
+	Analyzer.Flags.StringVar(&LogConfig.File, "log.file", LogConfig.File, "log file path.")
+	Analyzer.Flags.StringVar(&LogConfig.Format, "log.format", LogConfig.Format, "logging format. json or text")
 	Analyzer.Flags.StringVar(&ReportMode, "ReportMode", ReportMode, "reporting mode (RETURN, FUNCTION, BOTH)")
 	Analyzer.Flags.StringVar(&IncludePackages, "IncludePackages", IncludePackages, "include packages")
 	Analyzer.Flags.StringVar(&ExcludePackages, "ExcludePackages", ExcludePackages, "exclude packages")
@@ -51,10 +53,17 @@ func init() {
 	Analyzer.Flags.BoolVar(&EnableErrGroupAnalyzer, "EnableErrGroupAnalyzer", EnableErrGroupAnalyzer, "enable ErrGroupAnalyzer (default true)")
 }
 
-func setupAndRun(pass *analysis.Pass) (interface{}, error) {
-	slog.SetDefault(logger.NewLogger(logger.ConvertLogLevel(LogLevel), pass))
+func setupAndRun(pass *analysis.Pass) (any, error) {
+	closer, err := logger.SetDefault(LogConfig, pass)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err := closer(); err != nil {
+			fmt.Println(err)
+		}
+	}()
 
-	var err error
 	packageFilter, err = filter.New(IncludePackages, ExcludePackages)
 	if err != nil {
 		return nil, err

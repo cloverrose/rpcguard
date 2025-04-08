@@ -3,6 +3,8 @@ package callvalidate
 import (
 	"github.com/golangci/plugin-module-register/register"
 	"golang.org/x/tools/go/analysis"
+
+	"github.com/cloverrose/rpcguard/pkg/logger"
 )
 
 func RegisterPlugin() {
@@ -20,7 +22,7 @@ func newPlugin(conf any) (register.LinterPlugin, error) {
 }
 
 type settings struct {
-	LogLevel        string
+	Log             logger.Config
 	ExcludeFiles    string
 	ValidateMethods string
 }
@@ -30,8 +32,14 @@ type plugin struct {
 }
 
 func (p *plugin) BuildAnalyzers() ([]*analysis.Analyzer, error) {
-	if p.settings.LogLevel != "" {
-		LogLevel = p.settings.LogLevel
+	if p.settings.Log.Level != "" {
+		LogConfig.Level = p.settings.Log.Level
+	}
+	if p.settings.Log.File != "" {
+		LogConfig.File = p.settings.Log.File
+	}
+	if p.settings.Log.Format != "" {
+		LogConfig.Format = p.settings.Log.Format
 	}
 	if p.settings.ExcludeFiles != "" {
 		ExcludeFiles = p.settings.ExcludeFiles

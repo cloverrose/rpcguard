@@ -17,11 +17,47 @@ const (
 	posKey   = "pos"
 )
 
-func NewLogger(level slog.Level, pass *analysis.Pass) *slog.Logger {
-	return slog.New(&ValueHandler{
-		handler: slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: level}),
+// Config is logging configuration.
+type Config struct {
+	Level  string // "debug", "info", "warn", "error"
+	File   string // file name to write log
+	Format string // "json" or "text"
+}
+
+func SetDefault(cfg Config, pass *analysis.Pass) (closer func() error, err error) {
+	opts := &slog.HandlerOptions{
+		Level: convertLogLevel(cfg.Level),
+	}
+
+	// default closer
+	closer = func() error { return nil }
+
+	// configure writer
+	writer := os.Stdout
+	if cfg.File != "" {
+		file, err := os.OpenFile(cfg.File, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
+		if err != nil {
+			return nil, fmt.Errorf("failed to open log file: %w", err)
+		}
+		writer = file
+		closer = file.Close
+	}
+
+	// configure handler
+	var handler slog.Handler
+	switch strings.ToLower(cfg.Format) {
+	case "text":
+		handler = slog.NewTextHandler(writer, opts)
+	default:
+		handler = slog.NewJSONHandler(writer, opts)
+	}
+
+	// set default logger
+	slog.SetDefault(slog.New(&ValueHandler{
+		handler: handler,
 		pass:    pass,
-	})
+	}))
+	return closer, nil
 }
 
 func Attr(value ssa.Value) slog.Attr {
@@ -94,7 +130,7 @@ func getFileName(path string) string {
 	return elems[len(elems)-1]
 }
 
-func ConvertLogLevel(level string) slog.Level {
+func convertLogLevel(level string) slog.Level {
 	switch strings.ToLower(level) {
 	case "debug":
 		return slog.LevelDebug

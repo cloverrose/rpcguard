@@ -16,6 +16,7 @@ You can overwrite via commandline option or golangci setting.
 
 ```shell
 $ go install github.com/cloverrose/rpcguard/cmd/callvalidate@latest
+$ go install github.com/cloverrose/rpcguard/cmd/wraperr@latest
 ```
 
 ### Or Build from source
@@ -45,14 +46,14 @@ When you specify config
 
 ```shell
 go vet -vettool=`which rpc_callvalidate` \
-  -rpc_callvalidate.LogLevel=ERROR \
+  -rpc_callvalidate.log.level=ERROR \
    ./...
 ```
 
 ```shell
 go vet -vettool=`which rpc_wraperr` \
   -rpc_wraperr.IncludePackages="$(go list -m)/.*" \
-  -rpc_wraperr.LogLevel=ERROR \
+  -rpc_wraperr.log.level=ERROR \
   -rpc_wraperr.ReportMode=RETURN \
    ./...
 ```
@@ -66,11 +67,11 @@ Here are reference settings
 `.custom-gcl.yml`
 
 ```yaml
-version: v1.63.4
+version: v1.64.8
 plugins:
   - module: 'github.com/cloverrose/rpcguard'
     import: 'github.com/cloverrose/rpcguard'
-    version: v0.4.0
+    version: v0.6.0
 ```
 
 `.golangci.yml`
@@ -82,12 +83,16 @@ linters-settings:
       type: "module"
       description: check if RPC method uses Validate method properly.
       settings:
-        LogLevel: "ERROR"
+        log:
+          level: "ERROR"
+          file: "./log.txt"
     rpc_wraperr:
       type: "module"
       description:  check if RPC method returns wrapped error.
       settings:
-        LogLevel: "ERROR"
+        log:
+          level: "ERROR"
+          file: "./log.txt"
         ReportMode: "RETURN"
         IncludePackages: "github.com/cloverrose/linterplayground/.*"
 ```
