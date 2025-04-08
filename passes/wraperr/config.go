@@ -2,11 +2,15 @@ package wraperr
 
 import (
 	"github.com/cloverrose/rpcguard/pkg/filter"
+	"github.com/cloverrose/rpcguard/pkg/logger"
 )
 
-// LogLevel is configuration of logging level.
-// Available options are DEBUG, INFO, WARN, ERROR
-var LogLevel = "INFO"
+// log related configuration.
+var LogConfig = logger.Config{
+	Level:  "INFO",
+	File:   "",
+	Format: "json",
+}
 
 const (
 	reportModeReturn   = "RETURN"

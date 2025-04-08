@@ -2,6 +2,7 @@ package callvalidate
 
 import (
 	"flag"
+	"fmt"
 	"log/slog"
 
 	"golang.org/x/tools/go/analysis"
@@ -30,15 +31,24 @@ var Analyzer = &analysis.Analyzer{
 }
 
 func init() {
-	Analyzer.Flags.StringVar(&LogLevel, "LogLevel", LogLevel, "logging level")
+	Analyzer.Flags.StringVar(&LogConfig.Level, "log.level", LogConfig.Level, "logging level. debug, info, warn, error")
+	Analyzer.Flags.StringVar(&LogConfig.File, "log.file", LogConfig.File, "log file path.")
+	Analyzer.Flags.StringVar(&LogConfig.Format, "log.format", LogConfig.Format, "logging format. json or text")
 	Analyzer.Flags.StringVar(&ExcludeFiles, "ExcludeFiles", ExcludeFiles, "exclude files")
 	Analyzer.Flags.StringVar(&ValidateMethods, "ValidateMethods", ValidateMethods, "Validate methods")
 }
 
-func setupAndRun(pass *analysis.Pass) (interface{}, error) {
-	slog.SetDefault(logger.NewLogger(logger.ConvertLogLevel(LogLevel), pass))
+func setupAndRun(pass *analysis.Pass) (any, error) {
+	closer, err := logger.SetDefault(LogConfig, pass)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err := closer(); err != nil {
+			fmt.Println(err)
+		}
+	}()
 
-	var err error
 	// any files that are not excluded are target.
 	fileFilter, err = filter.New(`.*`, ExcludeFiles)
 	if err != nil {
