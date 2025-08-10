@@ -67,11 +67,11 @@ Here are reference settings
 `.custom-gcl.yml`
 
 ```yaml
-version: v2.3.1
+version: v2.4.0
 plugins:
   - module: 'github.com/cloverrose/rpcguard'
     import: 'github.com/cloverrose/rpcguard'
-    version: v0.6.3
+    version: v0.6.4
 ```
 
 `.golangci.yml`
