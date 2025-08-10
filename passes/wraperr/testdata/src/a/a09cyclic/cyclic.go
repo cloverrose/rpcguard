@@ -1,8 +1,9 @@
 package a09cyclic
 
 import (
-	"connectrpc.com/connect"
 	"errors"
+
+	"connectrpc.com/connect"
 )
 
 // ReachWrapError1 and ReachWrapError2 call each other. It eventually returns wrap error.

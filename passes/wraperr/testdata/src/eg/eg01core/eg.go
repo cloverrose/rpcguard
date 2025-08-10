@@ -1,9 +1,10 @@
 package eg01core
 
 import (
-	"connectrpc.com/connect"
 	"context"
 	"errors"
+
+	"connectrpc.com/connect"
 	"golang.org/x/sync/errgroup"
 )
 

@@ -22,10 +22,10 @@ var LogConfig = logger.Config{
 var ExcludeFiles = `.+_test\.go,.+\.connect\.go`
 
 // ValidateMethods is configuration which methods should be called.
-// Default is "github.com/bufbuild/protovalidate-go:Validate"
+// Default is "buf.build/go/protovalidate:Validate,github.com/bufbuild/protovalidate-go:Validate"
 // Package and Method join with `:`
 // You can specify multiple methods by using `,` separated value.
-var ValidateMethods = "github.com/bufbuild/protovalidate-go:Validate"
+var ValidateMethods = "buf.build/go/protovalidate:Validate,github.com/bufbuild/protovalidate-go:Validate"
 
 var fileFilter *filter.Filter
 

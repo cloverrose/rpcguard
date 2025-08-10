@@ -16,7 +16,7 @@ func Test(t *testing.T) {
 	testdata := analysistest.TestData()
 	testdata = testutil.WithModules(t, testdata, nil)
 	callvalidate.LogConfig.Level = "INFO"
-	callvalidate.ValidateMethods = "github.com/bufbuild/protovalidate-go:Validate,a:customValidate"
+	callvalidate.ValidateMethods = "buf.build/go/protovalidate:Validate,a:customValidate"
 	pkgs := "a"
 	analysistest.Run(t, testdata, callvalidate.Analyzer, strings.Split(pkgs, ",")...)
 }
