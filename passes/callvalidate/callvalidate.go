@@ -15,8 +15,10 @@ import (
 )
 
 const (
-	doc       = "rpc_callvalidate checks if RPC method uses Validate method properly."
-	reportMsg = "RPC method %s does not use protovalidate.Validate properly"
+	doc                                = "rpc_callvalidate checks if RPC method uses Validate method properly."
+	reportMsg                          = "RPC method %s does not use protovalidate.Validate properly"
+	customReportMsgTemplateOneMethod   = "RPC method %s does not use %s.%s properly"
+	customReportMsgTemplateMoreMethods = "RPC method %s does not use validate method properly, accepted validate methods are %s"
 )
 
 // Analyzer checks if RPC method uses Validate method properly.
@@ -100,11 +102,27 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			return nil, err
 		}
 		if !ok {
-			pass.Reportf(srcFunc.Pos(), reportMsg, srcFunc.Name())
+			report(pass, srcFunc, validateMethods, ValidateMethods)
 		}
 	}
 
 	return nil, nil
+}
+
+func report(pass *analysis.Pass, srcFunc *ssa.Function, validateMethods []Method, validateMethodsStr string) {
+	if len(validateMethods) == 0 {
+		// should not reach here
+		pass.Reportf(srcFunc.Pos(), reportMsg, srcFunc.Name())
+		return
+	}
+
+	if len(validateMethods) == 1 {
+		method := validateMethods[0]
+		pass.Reportf(srcFunc.Pos(), customReportMsgTemplateOneMethod, srcFunc.Name(), method.packagePath, method.name)
+		return
+	}
+
+	pass.Reportf(srcFunc.Pos(), customReportMsgTemplateMoreMethods, srcFunc.Name(), validateMethodsStr)
 }
 
 func isTargetFunc(pass *analysis.Pass, srcFunc *ssa.Function) bool {
