@@ -34,11 +34,11 @@ func (app *App) CallValidateButReturnOtherError(ctx context.Context, req *connec
 	return connect.NewResponse(&Message{"hello"}), nil
 }
 
-func (app *App) NoValidate(ctx context.Context, req *connect.Request[Message]) (*connect.Response[Message], error) { // want `RPC method NoValidate does not use protovalidate.Validate properly`
+func (app *App) NoValidate(ctx context.Context, req *connect.Request[Message]) (*connect.Response[Message], error) { // want `RPC method NoValidate does not use validate method properly, accepted validate methods are buf.build/go/protovalidate:Validate,a:customValidate`
 	return connect.NewResponse(&Message{"hello"}), nil
 }
 
-func (app *App) CallValidateButUseDifferently(ctx context.Context, req *connect.Request[Message]) (*connect.Response[Message], error) { // want `RPC method CallValidateButUseDifferently does not use protovalidate.Validate properly`
+func (app *App) CallValidateButUseDifferently(ctx context.Context, req *connect.Request[Message]) (*connect.Response[Message], error) { // want `RPC method CallValidateButUseDifferently does not use validate method properly, accepted validate methods are buf.build/go/protovalidate:Validate,a:customValidate`
 	err := protovalidate.Validate(req.Msg)
 	if err == nil {
 		return connect.NewResponse(&Message{"hello"}), nil
@@ -46,7 +46,7 @@ func (app *App) CallValidateButUseDifferently(ctx context.Context, req *connect.
 	return nil, err
 }
 
-func (app *App) CallValidateButIgnore(ctx context.Context, req *connect.Request[Message]) (*connect.Response[Message], error) { // want `RPC method CallValidateButIgnore does not use protovalidate.Validate properly`
+func (app *App) CallValidateButIgnore(ctx context.Context, req *connect.Request[Message]) (*connect.Response[Message], error) { // want `RPC method CallValidateButIgnore does not use validate method properly, accepted validate methods are buf.build/go/protovalidate:Validate,a:customValidate`
 	validateErr := protovalidate.Validate(req.Msg)
 	fmt.Println(validateErr)
 	return connect.NewResponse(&Message{"hello"}), nil
@@ -66,7 +66,7 @@ func (app *App) validate(req *connect.Request[Message]) error {
 	return nil
 }
 
-func (app *App) CallValidateInVerboseWrapper(ctx context.Context, req *connect.Request[Message]) (*connect.Response[Message], error) { // want `RPC method CallValidateInVerboseWrapper does not use protovalidate.Validate properly`
+func (app *App) CallValidateInVerboseWrapper(ctx context.Context, req *connect.Request[Message]) (*connect.Response[Message], error) { // want `RPC method CallValidateInVerboseWrapper does not use validate method properly, accepted validate methods are buf.build/go/protovalidate:Validate,a:customValidate`
 	if err := app.verboseValidate(req); err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func (app *App) verboseValidate(req *connect.Request[Message]) error {
 	return protovalidate.Validate(req.Msg)
 }
 
-func (app *App) CallValidateInNestedFuncWrongly(ctx context.Context, req *connect.Request[Message]) (*connect.Response[Message], error) { // want `RPC method CallValidateInNestedFuncWrongly does not use protovalidate.Validate properly`
+func (app *App) CallValidateInNestedFuncWrongly(ctx context.Context, req *connect.Request[Message]) (*connect.Response[Message], error) { // want `RPC method CallValidateInNestedFuncWrongly does not use validate method properly, accepted validate methods are buf.build/go/protovalidate:Validate,a:customValidate`
 	if err := app.badValidate(req); err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ func (app *App) validateL3(req *connect.Request[Message]) error {
 	return nil
 }
 
-func (app *App) IfCompareString(ctx context.Context, req *connect.Request[Message]) (*connect.Response[Message], error) { // want `RPC method IfCompareString does not use protovalidate.Validate properly`
+func (app *App) IfCompareString(ctx context.Context, req *connect.Request[Message]) (*connect.Response[Message], error) { // want `RPC method IfCompareString does not use validate method properly, accepted validate methods are buf.build/go/protovalidate:Validate,a:customValidate`
 	var s *string
 	if s != nil {
 		return nil, errors.New("err")
